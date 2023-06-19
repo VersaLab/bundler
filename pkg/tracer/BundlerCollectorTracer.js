@@ -13,13 +13,13 @@ var tracer = {
   fault: function fault(log, db) {
     this.debug.push(
       "fault depth=" +
-        log.getDepth() +
-        " gas=" +
-        log.getGas() +
-        " cost=" +
-        log.getCost() +
-        " err=" +
-        log.getError()
+      log.getDepth() +
+      " gas=" +
+      log.getGas() +
+      " cost=" +
+      log.getCost() +
+      " err=" +
+      log.getError()
     );
   },
   result: function result(ctx, db) {
@@ -35,13 +35,13 @@ var tracer = {
   enter: function enter(frame) {
     this.debug.push(
       "enter gas=" +
-        frame.getGas() +
-        " type=" +
-        frame.getType() +
-        " to=" +
-        toHex(frame.getTo()) +
-        " in=" +
-        toHex(frame.getInput()).slice(0, 500)
+      frame.getGas() +
+      " type=" +
+      frame.getType() +
+      " to=" +
+      toHex(frame.getTo()) +
+      " in=" +
+      toHex(frame.getInput()).slice(0, 500)
     );
     this.calls.push({
       type: frame.getType(),
@@ -95,7 +95,7 @@ var tracer = {
       var addrHex = toHex(addr);
       var contractSize =
         (contractSize = this.currentLevel.contractSize[addrHex]) !== null &&
-        contractSize !== void 0
+          contractSize !== void 0
           ? contractSize
           : 0;
       if (contractSize === 0 && !isPrecompiled(addr)) {

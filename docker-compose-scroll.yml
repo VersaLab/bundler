@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  bundler:
+    container_name: "bundler-scroll"
+    build: .
+    ports:
+      - "10012:4337"
+    restart: unless-stopped
+    volumes:
+      - .env-scroll:/app/.env
+    environment:
+      - TZ=Asia/Shanghai

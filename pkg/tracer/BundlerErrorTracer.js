@@ -18,7 +18,7 @@ var tracer = {
     return this._marker === this._executionMarker;
   },
 
-  fault: function fault(log, db) {},
+  fault: function fault(log, db) { },
   result: function result(ctx, db) {
     return {
       reverts: this.reverts,
@@ -28,7 +28,7 @@ var tracer = {
     };
   },
 
-  enter: function enter(frame) {},
+  enter: function enter(frame) { },
   exit: function exit(frame) {
     if (frame.getError() !== undefined && this._isExecution()) {
       this.reverts.push(toHex(frame.getOutput()));
