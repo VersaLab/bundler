@@ -1,11 +1,12 @@
 version: "3.9"
+
 services:
   bundler:
-    container_name: "bundler-polygon"
+    container_name: bundler-polygon
     build: .
     restart: unless-stopped
     ports:
-      - "10011:4337"
+      - 10011:4337
     volumes:
       - .env-polygon:/app/.env
     environment:
