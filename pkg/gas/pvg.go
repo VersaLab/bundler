@@ -15,6 +15,7 @@ import (
 	"github.com/stackup-wallet/stackup-bundler/pkg/entrypoint/methods"
 	"github.com/stackup-wallet/stackup-bundler/pkg/entrypoint/transaction"
 	"github.com/stackup-wallet/stackup-bundler/pkg/optimism/gaspriceoracle"
+	"github.com/stackup-wallet/stackup-bundler/pkg/scroll/testnetgaspriceoracle"
 	"github.com/stackup-wallet/stackup-bundler/pkg/signer"
 	"github.com/stackup-wallet/stackup-bundler/pkg/userop"
 )
@@ -143,6 +144,69 @@ func CalcOptimismPVGWithEthClient(
 		if l2priority.Cmp(l2price) == -1 {
 			l2price = l2priority
 		}
+
+		// Return static + L1 buffer as PVG. L1 buffer is equal to L1Fee/L2Price.
+		return big.NewInt(0).Add(static, big.NewInt(0).Div(l1fee, l2price)), nil
+	}
+}
+
+// CalcScrollTestnetPVGWithEthClient uses ScrollTestnet's Gas Price Oracle precompile to get an estimate for
+// preVerificationGas that takes into account the L1 gas component.
+func CalcScrollTestnetPVGWithEthClient(
+	rpc *rpc.Client,
+	chainID *big.Int,
+	entryPoint common.Address,
+) CalcPreVerificationGasFunc {
+	pk, _ := crypto.GenerateKey()
+	dummy, _ := signer.New(hexutil.Encode(crypto.FromECDSA(pk))[2:])
+	return func(op *userop.UserOperation, static *big.Int) (*big.Int, error) {
+		// Create Raw HandleOps Transaction
+		eth := ethclient.NewClient(rpc)
+		head, err := eth.HeaderByNumber(context.Background(), nil)
+		if err != nil {
+			return nil, err
+		}
+		tx, err := transaction.CreateRawHandleOps(
+			dummy,
+			eth,
+			chainID,
+			entryPoint,
+			[]*userop.UserOperation{op},
+			dummy.Address,
+			math.MaxUint64,
+			head.BaseFee,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Encode function data for GetL1Fee
+		data, err := hexutil.Decode(tx)
+		if err != nil {
+			return nil, err
+		}
+		ge, err := testnetgaspriceoracle.GetL1FeeMethod.Inputs.Pack(data)
+		if err != nil {
+			return nil, err
+		}
+
+		// Use eth_call to call the Gas Price Oracle precompile
+		req := map[string]any{
+			"from": common.HexToAddress("0x"),
+			"to":   testnetgaspriceoracle.PrecompileAddress,
+			"data": hexutil.Encode(append(testnetgaspriceoracle.GetL1FeeMethod.ID, ge...)),
+		}
+		var out any
+		if err := rpc.Call(&out, "eth_call", &req, "latest"); err != nil {
+			return nil, err
+		}
+
+		// Get L1Fee and L2Price
+		l1fee, err := testnetgaspriceoracle.DecodeGetL1FeeMethodOutput(out)
+		if err != nil {
+			return nil, err
+		}
+		l2price := op.MaxFeePerGas
 
 		// Return static + L1 buffer as PVG. L1 buffer is equal to L1Fee/L2Price.
 		return big.NewInt(0).Add(static, big.NewInt(0).Div(l1fee, l2price)), nil
