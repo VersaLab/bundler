@@ -84,11 +84,12 @@ func validateStorageSlotsForEntity(
 		for key, slotCount := range accessTypes {
 			for slot := range slotCount {
 				if isAssociatedWith(senderSlots, slot) {
-					if len(op.InitCode) > 0 {
-						mustStakeSlot = slot
-					} else {
-						continue
-					}
+					continue
+					// if len(op.InitCode) > 0 {
+					// 	mustStakeSlot = slot
+					// } else {
+					// 	continue
+					// }
 				} else if isAssociatedWith(storageSlots, slot) || addr == entityAddr {
 					mustStakeSlot = slot
 				} else {
