@@ -16,6 +16,7 @@ import (
 	"github.com/stackup-wallet/stackup-bundler/pkg/entrypoint/methods"
 	"github.com/stackup-wallet/stackup-bundler/pkg/entrypoint/transaction"
 	"github.com/stackup-wallet/stackup-bundler/pkg/optimism/gaspriceoracle"
+	"github.com/stackup-wallet/stackup-bundler/pkg/scroll/testnetgaspriceoracle"
 	"github.com/stackup-wallet/stackup-bundler/pkg/signer"
 	"github.com/stackup-wallet/stackup-bundler/pkg/userop"
 )
@@ -198,7 +199,7 @@ func CalcScrollTestnetPVGWithEthClient(
 		if err != nil {
 			return nil, err
 		}
-		ge, err := gaspriceoracle.GetL1FeeMethod.Inputs.Pack(data)
+		ge, err := testnetgaspriceoracle.GetL1FeeMethod.Inputs.Pack(data)
 		if err != nil {
 			return nil, err
 		}
@@ -206,8 +207,8 @@ func CalcScrollTestnetPVGWithEthClient(
 		// Use eth_call to call the Gas Price Oracle precompile
 		req := map[string]any{
 			"from": common.HexToAddress("0x"),
-			"to":   gaspriceoracle.PrecompileAddress,
-			"data": hexutil.Encode(append(gaspriceoracle.GetL1FeeMethod.ID, ge...)),
+			"to":   testnetgaspriceoracle.PrecompileAddress,
+			"data": hexutil.Encode(append(testnetgaspriceoracle.GetL1FeeMethod.ID, ge...)),
 		}
 		var out any
 		if err := rpc.Call(&out, "eth_call", &req, "latest"); err != nil {
@@ -215,7 +216,7 @@ func CalcScrollTestnetPVGWithEthClient(
 		}
 
 		// Get L1Fee and L2Price
-		l1fee, err := gaspriceoracle.DecodeGetL1FeeMethodOutput(out)
+		l1fee, err := testnetgaspriceoracle.DecodeGetL1FeeMethodOutput(out)
 		if err != nil {
 			return nil, err
 		}
