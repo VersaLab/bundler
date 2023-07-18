@@ -94,9 +94,10 @@ func EstimateGas(
 		}
 
 		// Optimal VGL found.
-		data["verificationGasLimit"] = hexutil.EncodeBig(
-			big.NewInt(0).Sub(sim.PreOpGas, op.PreVerificationGas),
-		)
+		// data["verificationGasLimit"] = hexutil.EncodeBig(
+		// 	big.NewInt(0).Sub(sim.PreOpGas, op.PreVerificationGas),
+		// )
+		data["verificationGasLimit"] = hexutil.EncodeBig(sim.PreOpGas)
 		break
 	}
 	if simErr != nil && !isExecutionOOG(simErr) {

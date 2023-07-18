@@ -81,7 +81,7 @@ func validateStorageSlotsForEntity(
 			"read":  access.Reads,
 			"write": access.Writes,
 		}
-		for _, slotCount := range accessTypes {
+		for key, slotCount := range accessTypes {
 			for slot := range slotCount {
 				if isAssociatedWith(senderSlots, slot) {
 					continue
@@ -93,7 +93,7 @@ func validateStorageSlotsForEntity(
 				} else if isAssociatedWith(storageSlots, slot) || addr == entityAddr {
 					mustStakeSlot = slot
 				} else {
-					// return fmt.Errorf("%s has forbidden %s to %s slot %s", entityName, key, addr2KnownEntity(op, addr), slot)
+					return fmt.Errorf("%s has forbidden %s to %s slot %s", entityName, key, addr2KnownEntity(op, addr), slot)
 				}
 			}
 		}
