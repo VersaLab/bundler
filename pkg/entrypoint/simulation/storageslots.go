@@ -84,12 +84,12 @@ func validateStorageSlotsForEntity(
 		for key, slotCount := range accessTypes {
 			for slot := range slotCount {
 				if isAssociatedWith(senderSlots, slot) {
-					continue
 					// if len(op.InitCode) > 0 {
 					// 	mustStakeSlot = slot
 					// } else {
 					// 	continue
 					// }
+					continue
 				} else if isAssociatedWith(storageSlots, slot) || addr == entityAddr {
 					mustStakeSlot = slot
 				} else {
@@ -97,6 +97,20 @@ func validateStorageSlotsForEntity(
 				}
 			}
 		}
+		// for _, slotCount := range accessTypes {
+		// 	for slot := range slotCount {
+		// 		if isAssociatedWith(senderSlots, slot) {
+		// 			// if len(op.InitCode) > 0 {
+		// 			// 	mustStakeSlot = slot
+		// 			// } else {
+		// 			// 	continue
+		// 			// }
+		// 			continue
+		// 		} else if isAssociatedWith(storageSlots, slot) || addr == entityAddr {
+		// 			mustStakeSlot = slot
+		// 		}
+		// 	}
+		// }
 
 		if mustStakeSlot != "" && !entityIsStaked {
 			return fmt.Errorf(

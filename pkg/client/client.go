@@ -179,6 +179,8 @@ func (i *Client) EstimateUserOperationGas(op map[string]any, ep string) (*gas.Ga
 		return nil, err
 	}
 
+	pvg = big.NewInt(0).Add(pvg, big.NewInt(10000))
+
 	l.Info("eth_estimateUserOperationGas ok")
 	return &gas.GasEstimates{
 		PreVerificationGas:   pvg,

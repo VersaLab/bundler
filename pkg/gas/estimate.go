@@ -94,10 +94,10 @@ func EstimateGas(
 		}
 
 		// Optimal VGL found.
-		// data["verificationGasLimit"] = hexutil.EncodeBig(
-		// 	big.NewInt(0).Sub(sim.PreOpGas, op.PreVerificationGas),
-		// )
-		data["verificationGasLimit"] = hexutil.EncodeBig(sim.PreOpGas)
+		data["verificationGasLimit"] = hexutil.EncodeBig(
+			big.NewInt(0).Sub(sim.PreOpGas, op.PreVerificationGas),
+		)
+
 		break
 	}
 	if simErr != nil && !isExecutionOOG(simErr) {
@@ -139,8 +139,13 @@ func EstimateGas(
 	// expected gas cost.
 	data["maxFeePerGas"] = hexutil.EncodeBig(op.MaxFeePerGas)
 	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(op.MaxFeePerGas)
-	data["verificationGasLimit"] = hexutil.EncodeBig(vgl)
+
+	cgl = big.NewInt(0).Add(cgl, big.NewInt(10000))
 	data["callGasLimit"] = hexutil.EncodeBig(cgl)
+
+	vgl = big.NewInt(0).Add(vgl, big.NewInt(50000))
+	data["verificationGasLimit"] = hexutil.EncodeBig(vgl)
+
 	simOp, err = userop.New(data)
 	if err != nil {
 		return 0, 0, err
