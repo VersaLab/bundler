@@ -24,18 +24,19 @@ func isExecutionOOG(err error) bool {
 	return strings.Contains(err.Error(), "execution OOG")
 }
 
+type EstimateInput struct {
+	Rpc        *rpc.Client
+	EntryPoint common.Address
+	Op         *userop.UserOperation
+	Ov         *Overhead
+	ChainID    *big.Int
+}
+
 // EstimateGas uses the simulateHandleOp method on the EntryPoint to derive an estimate for
 // verificationGasLimit and callGasLimit.
-func EstimateGas(
-	rpc *rpc.Client,
-	from common.Address,
-	op *userop.UserOperation,
-	ov *Overhead,
-	chainID *big.Int,
-	tracer string,
-) (verificationGas uint64, callGas uint64, err error) {
+func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err error) {
 	// Skip if maxFeePerGas is zero.
-	if op.MaxFeePerGas.Cmp(big.NewInt(0)) != 1 {
+	if in.Op.MaxFeePerGas.Cmp(big.NewInt(0)) != 1 {
 		return 0, 0, errors.NewRPCError(
 			errors.INVALID_FIELDS,
 			"maxFeePerGas must be more than 0",
@@ -44,11 +45,11 @@ func EstimateGas(
 	}
 
 	// Set the initial conditions.
-	data, err := op.ToMap()
+	data, err := in.Op.ToMap()
 	if err != nil {
 		return 0, 0, err
 	}
-	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(op.MaxFeePerGas)
+	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
 	data["verificationGasLimit"] = hexutil.EncodeBig(big.NewInt(0))
 	data["callGasLimit"] = hexutil.EncodeBig(big.NewInt(0))
 
@@ -66,15 +67,12 @@ func EstimateGas(
 		if err != nil {
 			return 0, 0, err
 		}
-		sim, _, err := execution.TraceSimulateHandleOp(
-			rpc,
-			from,
-			simOp,
-			chainID,
-			tracer,
-			common.Address{},
-			[]byte{},
-		)
+		out, err := execution.TraceSimulateHandleOp(&execution.TraceInput{
+			Rpc:        in.Rpc,
+			EntryPoint: in.EntryPoint,
+			Op:         simOp,
+			ChainID:    in.ChainID,
+		})
 		simErr = err
 		if err != nil {
 			if isPrefundNotPaid(err) {
@@ -95,7 +93,7 @@ func EstimateGas(
 
 		// Optimal VGL found.
 		data["verificationGasLimit"] = hexutil.EncodeBig(
-			big.NewInt(0).Sub(sim.PreOpGas, op.PreVerificationGas),
+			big.NewInt(0).Sub(out.Result.PreOpGas, in.Op.PreVerificationGas),
 		)
 
 		break
@@ -113,32 +111,29 @@ func EstimateGas(
 	if err != nil {
 		return 0, 0, err
 	}
-	sim, ev, err := execution.TraceSimulateHandleOp(
-		rpc,
-		from,
-		simOp,
-		chainID,
-		tracer,
-		common.Address{},
-		[]byte{},
-	)
+	out, err := execution.TraceSimulateHandleOp(&execution.TraceInput{
+		Rpc:        in.Rpc,
+		EntryPoint: in.EntryPoint,
+		Op:         simOp,
+		ChainID:    in.ChainID,
+	})
 	if err != nil {
 		return 0, 0, err
 	}
 
 	// Calculate final values for verificationGasLimit and callGasLimit.
 	vgl := simOp.VerificationGasLimit
-	cgl := big.NewInt(0).
-		Add(big.NewInt(0).Sub(ev.ActualGasUsed, sim.PreOpGas), big.NewInt(int64(ov.intrinsicFixed)))
-	min := ov.NonZeroValueCall()
-	if min.Cmp(cgl) >= 1 {
-		cgl = min
+	cg := big.NewInt(0).Sub(out.Event.ActualGasUsed, out.Result.PreOpGas)
+	cgb := big.NewInt(int64(out.Trace.ExecutionGasBuffer))
+	cgl := big.NewInt(0).Add(cg, cgb)
+	if cgl.Cmp(in.Ov.NonZeroValueCall()) < 0 {
+		cgl = in.Ov.NonZeroValueCall()
 	}
 
 	// Run a final simulation to check wether or not value transfers are still okay when factoring in the
 	// expected gas cost.
-	data["maxFeePerGas"] = hexutil.EncodeBig(op.MaxFeePerGas)
-	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(op.MaxFeePerGas)
+	data["maxFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
+	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
 
 	cgl = big.NewInt(0).Add(cgl, big.NewInt(10000))
 	data["callGasLimit"] = hexutil.EncodeBig(cgl)
@@ -150,17 +145,14 @@ func EstimateGas(
 	if err != nil {
 		return 0, 0, err
 	}
-	_, _, err = execution.TraceSimulateHandleOp(
-		rpc,
-		from,
-		simOp,
-		chainID,
-		tracer,
-		common.Address{},
-		[]byte{},
-	)
+	_, err = execution.TraceSimulateHandleOp(&execution.TraceInput{
+		Rpc:        in.Rpc,
+		EntryPoint: in.EntryPoint,
+		Op:         simOp,
+		ChainID:    in.ChainID,
+	})
 	if err != nil {
 		return 0, 0, err
 	}
-	return vgl.Uint64(), cgl.Uint64(), nil
+	return simOp.VerificationGasLimit.Uint64(), simOp.CallGasLimit.Uint64(), nil
 }
