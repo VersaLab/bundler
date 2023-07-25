@@ -107,7 +107,8 @@ func validateStorageSlotsForEntity(
 		// 			// }
 		// 			continue
 		// 		} else if isAssociatedWith(storageSlots, slot) || addr == entityAddr {
-		// 			mustStakeSlot = slot
+		// 			// mustStakeSlot = slot
+		// 			continue
 		// 		}
 		// 	}
 		// }

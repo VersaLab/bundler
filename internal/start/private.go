@@ -70,10 +70,10 @@ func PrivateMode() {
 		)
 		ov.SetPreVerificationGasBufferFactor(1)
 	}
-	if chain.Cmp(config.ScrollTestnetChainID) == 0 {
-		ov.SetCalcPreVerificationGasFunc(gas.CalcScrollTestnetPVGWithEthClient(rpc, chain, conf.SupportedEntryPoints[0]))
-		ov.SetPreVerificationGasBufferFactor(1)
-	}
+	// if chain.Cmp(config.ScrollTestnetChainID) == 0 {
+	// 	ov.SetCalcPreVerificationGasFunc(gas.CalcScrollTestnetPVGWithEthClient(rpc, chain, conf.SupportedEntryPoints[0]))
+	// 	ov.SetPreVerificationGasBufferFactor(1)
+	// }
 
 	mem, err := mempool.New(db)
 	if err != nil {
