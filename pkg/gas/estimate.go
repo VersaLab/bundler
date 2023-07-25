@@ -77,12 +77,12 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 		if err != nil {
 			if isPrefundNotPaid(err) {
 				// VGL too high, go lower.
-				r = m - 1
+				r = m - 10000
 				continue
 			}
 			if isValidationOOG(err) {
 				// VGL too low, go higher.
-				l = m + 1
+				l = m + 10000
 				continue
 			}
 			// CGL is set to 0 and execution will always be OOG. Ignore it.
@@ -145,14 +145,16 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 	if err != nil {
 		return 0, 0, err
 	}
-	_, err = execution.TraceSimulateHandleOp(&execution.TraceInput{
-		Rpc:        in.Rpc,
-		EntryPoint: in.EntryPoint,
-		Op:         simOp,
-		ChainID:    in.ChainID,
-	})
-	if err != nil {
-		return 0, 0, err
-	}
+
+	// _, err = execution.TraceSimulateHandleOp(&execution.TraceInput{
+	// 	Rpc:        in.Rpc,
+	// 	EntryPoint: in.EntryPoint,
+	// 	Op:         simOp,
+	// 	ChainID:    in.ChainID,
+	// })
+	// if err != nil {
+	// 	return 0, 0, err
+	// }
+
 	return simOp.VerificationGasLimit.Uint64(), simOp.CallGasLimit.Uint64(), nil
 }
