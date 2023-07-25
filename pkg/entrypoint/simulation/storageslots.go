@@ -92,26 +92,12 @@ func validateStorageSlotsForEntity(
 					continue
 				} else if isAssociatedWith(storageSlots, slot) || addr == entityAddr {
 					mustStakeSlot = slot
+					// continue
 				} else {
 					return fmt.Errorf("%s has forbidden %s to %s slot %s", entityName, key, addr2KnownEntity(op, addr), slot)
 				}
 			}
 		}
-		// for _, slotCount := range accessTypes {
-		// 	for slot := range slotCount {
-		// 		if isAssociatedWith(senderSlots, slot) {
-		// 			// if len(op.InitCode) > 0 {
-		// 			// 	mustStakeSlot = slot
-		// 			// } else {
-		// 			// 	continue
-		// 			// }
-		// 			continue
-		// 		} else if isAssociatedWith(storageSlots, slot) || addr == entityAddr {
-		// 			// mustStakeSlot = slot
-		// 			continue
-		// 		}
-		// 	}
-		// }
 
 		if mustStakeSlot != "" && !entityIsStaked {
 			return fmt.Errorf(

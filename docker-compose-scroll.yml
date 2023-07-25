@@ -6,7 +6,7 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - 10012:4337
+      - 43372:4337
     volumes:
       - .env-scroll:/app/.env
     environment:
