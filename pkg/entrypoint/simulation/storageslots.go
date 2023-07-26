@@ -92,7 +92,6 @@ func validateStorageSlotsForEntity(
 					continue
 				} else if isAssociatedWith(storageSlots, slot) || addr == entityAddr {
 					mustStakeSlot = slot
-					// continue
 				} else {
 					return fmt.Errorf("%s has forbidden %s to %s slot %s", entityName, key, addr2KnownEntity(op, addr), slot)
 				}

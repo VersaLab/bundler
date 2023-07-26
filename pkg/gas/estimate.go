@@ -78,12 +78,12 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 		if err != nil {
 			if isPrefundNotPaid(err) {
 				// VGL too high, go lower.
-				r = m - 10000
+				r = m - 1
 				continue
 			}
 			if isValidationOOG(err) {
 				// VGL too low, go higher.
-				l = m + 10000
+				l = m + 1
 				continue
 			}
 			// CGL is set to 0 and execution will always be OOG. Ignore it.
@@ -134,7 +134,7 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 	data["maxFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
 	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
 
-	cgl = big.NewInt(0).Add(cgl, big.NewInt(10000))
+	cgl = big.NewInt(0).Add(cgl, big.NewInt(25000))
 	data["callGasLimit"] = hexutil.EncodeBig(cgl)
 
 	vgl = big.NewInt(0).Add(vgl, big.NewInt(50000))
