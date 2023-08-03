@@ -9,6 +9,7 @@ var (
 	ArbitrumGoerliChainID = big.NewInt(421613)
 	OptimismChainID       = big.NewInt(10)
 	OptimismGoerliChainID = big.NewInt(420)
+	BaseChainID           = big.NewInt(8453)
 	BaseGoerliChainID     = big.NewInt(84531)
 	ScrollTestnetChainID  = big.NewInt(534353)
 )
