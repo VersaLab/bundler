@@ -71,52 +71,52 @@ func isAssociatedWith(slots storageSlots, slot string) bool {
 }
 
 func (v *storageSlotsValidator) Process() error {
-	senderSlots := v.SenderSlots
-	if senderSlots == nil {
-		senderSlots = mapset.NewSet[string]()
-	}
-	entitySlots := v.EntitySlots
-	if entitySlots == nil {
-		entitySlots = mapset.NewSet[string]()
-	}
+	// senderSlots := v.SenderSlots
+	// if senderSlots == nil {
+	// 	senderSlots = mapset.NewSet[string]()
+	// }
+	// entitySlots := v.EntitySlots
+	// if entitySlots == nil {
+	// 	entitySlots = mapset.NewSet[string]()
+	// }
 
-	for addr, access := range v.EntityAccess {
-		if addr == v.Op.Sender || addr == v.EntryPoint {
-			continue
-		}
+	// for addr, access := range v.EntityAccess {
+	// 	if addr == v.Op.Sender || addr == v.EntryPoint {
+	// 		continue
+	// 	}
 
-		var mustStakeSlot string
-		accessTypes := map[string]tracer.Counts{
-			"read":  access.Reads,
-			"write": access.Writes,
-		}
-		for key, slotCount := range accessTypes {
-			for slot := range slotCount {
-				if isAssociatedWith(senderSlots, slot) {
-					// if (len(v.Op.InitCode) > 0 && !v.FactoryIsStaked) ||
-					// 	(len(v.Op.InitCode) > 0 && v.FactoryIsStaked && v.EntityAddr != v.Op.Sender) {
-					// 	mustStakeSlot = slot
-					// } else {
-					// 	continue
-					// }
-					continue
-				} else if isAssociatedWith(entitySlots, slot) || addr == v.EntityAddr {
-					mustStakeSlot = slot
-				} else {
-					return fmt.Errorf("%s has forbidden %s to %s slot %s", v.EntityName, key, addr2KnownEntity(v.Op, addr), slot)
-				}
-			}
-		}
+	// 	var mustStakeSlot string
+	// 	accessTypes := map[string]tracer.Counts{
+	// 		"read":  access.Reads,
+	// 		"write": access.Writes,
+	// 	}
+	// 	for key, slotCount := range accessTypes {
+	// 		for slot := range slotCount {
+	// 			if isAssociatedWith(senderSlots, slot) {
+	// 				// if (len(v.Op.InitCode) > 0 && !v.FactoryIsStaked) ||
+	// 				// 	(len(v.Op.InitCode) > 0 && v.FactoryIsStaked && v.EntityAddr != v.Op.Sender) {
+	// 				// 	mustStakeSlot = slot
+	// 				// } else {
+	// 				// 	continue
+	// 				// }
+	// 				continue
+	// 			} else if isAssociatedWith(entitySlots, slot) || addr == v.EntityAddr {
+	// 				mustStakeSlot = slot
+	// 			} else {
+	// 				return fmt.Errorf("%s has forbidden %s to %s slot %s", v.EntityName, key, addr2KnownEntity(v.Op, addr), slot)
+	// 			}
+	// 		}
+	// 	}
 
-		if mustStakeSlot != "" && !v.EntityIsStaked {
-			return fmt.Errorf(
-				"unstaked %s accessed %s slot %s",
-				v.EntityName,
-				addr2KnownEntity(v.Op, addr),
-				mustStakeSlot,
-			)
-		}
-	}
+	// 	if mustStakeSlot != "" && !v.EntityIsStaked {
+	// 		return fmt.Errorf(
+	// 			"unstaked %s accessed %s slot %s",
+	// 			v.EntityName,
+	// 			addr2KnownEntity(v.Op, addr),
+	// 			mustStakeSlot,
+	// 		)
+	// 	}
+	// }
 
 	return nil
 }

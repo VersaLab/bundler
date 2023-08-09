@@ -25,8 +25,7 @@ func filterUserOperationEvent(
 	}
 	toBlk := big.NewInt(0).SetUint64(bn)
 	startBlk := big.NewInt(0)
-	sub10kBlk := big.NewInt(0).Sub(toBlk, big.NewInt(9900))
-	// sub10kBlk := big.NewInt(0).Sub(toBlk, big.NewInt(4900))
+	sub10kBlk := big.NewInt(0).Sub(toBlk, big.NewInt(4980))
 	if sub10kBlk.Cmp(startBlk) > 0 {
 		startBlk = sub10kBlk
 	}
