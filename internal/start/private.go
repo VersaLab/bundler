@@ -111,13 +111,7 @@ func PrivateMode() {
 		conf.MaxOpsForUnstakedSender,
 	)
 
-	relayer := relay.New(db, eoa, eth, chain, beneficiary, logr)
-	if conf.RelayerBannedThreshold > 0 {
-		relayer.SetBannedThreshold(conf.RelayerBannedThreshold)
-	}
-	if conf.RelayerBannedTimeWindow > 0 {
-		relayer.SetBannedTimeWindow(conf.RelayerBannedTimeWindow)
-	}
+	relayer := relay.New(eoa, eth, chain, beneficiary, logr)
 
 	paymaster := paymaster.New(db)
 
@@ -163,7 +157,6 @@ func PrivateMode() {
 	if conf.DebugMode {
 		d = client.NewDebug(eoa, eth, mem, b, chain, conf.SupportedEntryPoints[0], beneficiary)
 		b.SetMaxBatch(1)
-		relayer.SetBannedThreshold(relay.NoBanThreshold)
 		relayer.SetWaitTimeout(0)
 	}
 
@@ -185,10 +178,8 @@ func PrivateMode() {
 		g.Status(http.StatusOK)
 	})
 	handlers := []gin.HandlerFunc{
-		relayer.FilterByClientID(),
 		jsonrpc.Controller(client.NewRpcAdapter(c, d)),
 		jsonrpc.WithOTELTracerAttributes(),
-		relayer.MapUserOpHashToClientID(),
 	}
 	r.POST("/", handlers...)
 	r.POST("/rpc", handlers...)
