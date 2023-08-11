@@ -2,12 +2,12 @@ version: "3.9"
 
 services:
   bundler:
-    container_name: bundler-scroll
+    container_name: bundler-scroll-sepolia
     build: .
     restart: unless-stopped
     ports:
-      - 43372:4337
+      - 43373:4337
     volumes:
-      - .env-scroll:/app/.env
+      - .env-scroll-alpha:/app/.env
     environment:
       - TZ=Asia/Shanghai
