@@ -96,7 +96,6 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 		data["verificationGasLimit"] = hexutil.EncodeBig(
 			big.NewInt(0).Sub(out.Result.PreOpGas, in.Op.PreVerificationGas),
 		)
-
 		break
 	}
 	if simErr != nil && !isExecutionOOG(simErr) {
@@ -133,18 +132,14 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 	// expected gas cost.
 	data["maxFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
 	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
-
-	cgl = big.NewInt(0).Add(cgl, big.NewInt(25000))
-	data["callGasLimit"] = hexutil.EncodeBig(cgl)
-
 	vgl = big.NewInt(0).Add(vgl, big.NewInt(50000))
 	data["verificationGasLimit"] = hexutil.EncodeBig(vgl)
-
+	cgl = big.NewInt(0).Add(cgl, big.NewInt(50000))
+	data["callGasLimit"] = hexutil.EncodeBig(cgl)
 	simOp, err = userop.New(data)
 	if err != nil {
 		return 0, 0, err
 	}
-
 	// _, err = execution.TraceSimulateHandleOp(&execution.TraceInput{
 	// 	Rpc:        in.Rpc,
 	// 	EntryPoint: in.EntryPoint,
@@ -154,6 +149,5 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 	// if err != nil {
 	// 	return 0, 0, err
 	// }
-
 	return simOp.VerificationGasLimit.Uint64(), simOp.CallGasLimit.Uint64(), nil
 }

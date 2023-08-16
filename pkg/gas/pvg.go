@@ -16,7 +16,7 @@ import (
 	"github.com/stackup-wallet/stackup-bundler/pkg/entrypoint/methods"
 	"github.com/stackup-wallet/stackup-bundler/pkg/entrypoint/transaction"
 	"github.com/stackup-wallet/stackup-bundler/pkg/optimism/gaspriceoracle"
-	"github.com/stackup-wallet/stackup-bundler/pkg/scroll/testnetgaspriceoracle"
+	"github.com/stackup-wallet/stackup-bundler/pkg/scroll/l1gaspriceoracle"
 	"github.com/stackup-wallet/stackup-bundler/pkg/signer"
 	"github.com/stackup-wallet/stackup-bundler/pkg/userop"
 )
@@ -164,9 +164,9 @@ func CalcOptimismPVGWithEthClient(
 	}
 }
 
-// CalcScrollTestnetPVGWithEthClient uses ScrollTestnet's Gas Price Oracle precompile to get an estimate for
+// CalcScrollPVGWithEthClient uses Scroll's Gas Price Oracle precompile to get an estimate for
 // preVerificationGas that takes into account the L1 gas component.
-func CalcScrollTestnetPVGWithEthClient(
+func CalcScrollPVGWithEthClient(
 	rpc *rpc.Client,
 	chainID *big.Int,
 	entryPoint common.Address,
@@ -199,7 +199,7 @@ func CalcScrollTestnetPVGWithEthClient(
 		if err != nil {
 			return nil, err
 		}
-		ge, err := testnetgaspriceoracle.GetL1FeeMethod.Inputs.Pack(data)
+		ge, err := l1gaspriceoracle.GetL1FeeMethod.Inputs.Pack(data)
 		if err != nil {
 			return nil, err
 		}
@@ -207,8 +207,8 @@ func CalcScrollTestnetPVGWithEthClient(
 		// Use eth_call to call the Gas Price Oracle precompile
 		req := map[string]any{
 			"from": common.HexToAddress("0x"),
-			"to":   testnetgaspriceoracle.PrecompileAddress,
-			"data": hexutil.Encode(append(testnetgaspriceoracle.GetL1FeeMethod.ID, ge...)),
+			"to":   l1gaspriceoracle.PrecompileAddress,
+			"data": hexutil.Encode(append(l1gaspriceoracle.GetL1FeeMethod.ID, ge...)),
 		}
 		var out any
 		if err := rpc.Call(&out, "eth_call", &req, "latest"); err != nil {
@@ -216,7 +216,7 @@ func CalcScrollTestnetPVGWithEthClient(
 		}
 
 		// Get L1Fee and L2Price
-		l1fee, err := testnetgaspriceoracle.DecodeGetL1FeeMethodOutput(out)
+		l1fee, err := l1gaspriceoracle.DecodeGetL1FeeMethodOutput(out)
 		if err != nil {
 			return nil, err
 		}

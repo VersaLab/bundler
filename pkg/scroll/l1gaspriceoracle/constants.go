@@ -1,4 +1,4 @@
-package testnetgaspriceoracle
+package l1gaspriceoracle
 
 import "github.com/ethereum/go-ethereum/common"
 

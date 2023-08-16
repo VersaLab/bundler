@@ -11,5 +11,6 @@ var (
 	OptimismGoerliChainID = big.NewInt(420)
 	BaseChainID           = big.NewInt(8453)
 	BaseGoerliChainID     = big.NewInt(84531)
-	ScrollTestnetChainID  = big.NewInt(534353)
+	ScrollAlphaChainID    = big.NewInt(534353)
+	ScrollSepoliaChainID  = big.NewInt(534351)
 )
