@@ -119,7 +119,11 @@ func HandleOps(opts *Opts) (txn *types.Transaction, err error) {
 		auth.GasFeeCap = SuggestMeanGasFeeCap(opts.BaseFee, opts.Tip, opts.Batch)
 	} else if opts.GasPrice != nil {
 		if conf.GasPrice != 0 {
-			auth.GasPrice = big.NewInt(0).Mul(big.NewInt(int64(conf.GasPrice)), big.NewInt(1000000))
+			auth.GasPrice = SuggestMeanGasPrice(opts.GasPrice, opts.Batch)
+			fixedGasPrice := big.NewInt(0).Mul(big.NewInt(int64(conf.GasPrice)), big.NewInt(1000000))
+			if auth.GasPrice.Cmp(fixedGasPrice) < 0 {
+				auth.GasPrice = fixedGasPrice
+			}
 		} else {
 			auth.GasPrice = SuggestMeanGasPrice(opts.GasPrice, opts.Batch)
 		}
