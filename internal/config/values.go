@@ -38,6 +38,7 @@ type Values struct {
 	// Undocumented variables.
 	DebugMode bool
 	GinMode   string
+	GasPrice  int
 }
 
 func envKeyValStringToMap(s string) map[string]string {
@@ -81,6 +82,7 @@ func GetValues() *Values {
 	viper.SetDefault("erc4337_bundler_otel_insecure_mode", false)
 	viper.SetDefault("erc4337_bundler_debug_mode", false)
 	viper.SetDefault("erc4337_bundler_gin_mode", gin.ReleaseMode)
+	viper.SetDefault("erc4337_bundler_customize_gas_price", 0)
 
 	// Read in from .env file if available
 	viper.SetConfigName(".env")
@@ -114,6 +116,7 @@ func GetValues() *Values {
 	_ = viper.BindEnv("erc4337_bundler_otel_insecure_mode")
 	_ = viper.BindEnv("erc4337_bundler_debug_mode")
 	_ = viper.BindEnv("erc4337_bundler_gin_mode")
+	_ = viper.BindEnv("erc4337_bundler_customize_gas_price")
 
 	// Validate required variables
 	if variableNotSetOrIsNil("erc4337_bundler_eth_client_url") {
@@ -164,6 +167,7 @@ func GetValues() *Values {
 	otelInsecureMode := viper.GetBool("erc4337_bundler_otel_insecure_mode")
 	debugMode := viper.GetBool("erc4337_bundler_debug_mode")
 	ginMode := viper.GetString("erc4337_bundler_gin_mode")
+	gasPrice := viper.GetInt("erc4337_bundler_customize_gas_price")
 	return &Values{
 		PrivateKey:              privateKey,
 		EthClientUrl:            ethClientUrl,
@@ -183,5 +187,6 @@ func GetValues() *Values {
 		OTELInsecureMode:        otelInsecureMode,
 		DebugMode:               debugMode,
 		GinMode:                 ginMode,
+		GasPrice:                gasPrice,
 	}
 }

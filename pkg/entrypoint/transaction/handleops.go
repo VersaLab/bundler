@@ -14,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/stackup-wallet/stackup-bundler/internal/config"
 	"github.com/stackup-wallet/stackup-bundler/pkg/entrypoint"
 	"github.com/stackup-wallet/stackup-bundler/pkg/entrypoint/reverts"
 	"github.com/stackup-wallet/stackup-bundler/pkg/signer"
@@ -94,6 +95,8 @@ func EstimateHandleOpsGas(opts *Opts) (gas uint64, revert *reverts.FailedOpRever
 
 // HandleOps submits a transaction to send a batch of UserOperations to the EntryPoint.
 func HandleOps(opts *Opts) (txn *types.Transaction, err error) {
+	conf := config.GetValues()
+
 	ep, err := entrypoint.NewEntrypoint(opts.EntryPoint, opts.Eth)
 	if err != nil {
 		return nil, err
@@ -115,7 +118,11 @@ func HandleOps(opts *Opts) (txn *types.Transaction, err error) {
 		auth.GasTipCap = SuggestMeanGasTipCap(opts.Tip, opts.Batch)
 		auth.GasFeeCap = SuggestMeanGasFeeCap(opts.BaseFee, opts.Tip, opts.Batch)
 	} else if opts.GasPrice != nil {
-		auth.GasPrice = SuggestMeanGasPrice(opts.GasPrice, opts.Batch)
+		if conf.GasPrice != 0 {
+			auth.GasPrice = big.NewInt(0).Mul(big.NewInt(int64(conf.GasPrice)), big.NewInt(10000000))
+		} else {
+			auth.GasPrice = SuggestMeanGasPrice(opts.GasPrice, opts.Batch)
+		}
 	} else {
 		return nil, errors.New("transaction: either the dynamic or legacy gas fees must be set")
 	}
