@@ -196,7 +196,7 @@ func (i *Bundler) Run() error {
 		return nil
 	}
 
-	ticker := time.NewTicker(2 * time.Second)
+	ticker := time.NewTicker(1 * time.Second)
 	go func(i *Bundler) {
 		for {
 			select {
