@@ -6,7 +6,7 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - 43373:4337
+      - 10101:4337
     volumes:
       - .env-scroll-sepolia:/app/.env
     environment:

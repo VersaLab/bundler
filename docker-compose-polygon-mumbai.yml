@@ -6,7 +6,7 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - 43371:4337
+      - 10103:4337
     volumes:
       - .env-polygon-mumbai:/app/.env
     environment:
