@@ -152,9 +152,9 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 	// expected gas cost.
 	data["maxFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
 	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
-	vgl = big.NewInt(0).Add(vgl, big.NewInt(20000))
+	vgl = big.NewInt(0).Add(vgl, big.NewInt(40000))
 	data["verificationGasLimit"] = hexutil.EncodeBig(vgl)
-	cgl = big.NewInt(0).Add(cgl, big.NewInt(20000))
+	cgl = big.NewInt(0).Add(cgl, big.NewInt(40000))
 	data["callGasLimit"] = hexutil.EncodeBig(cgl)
 	simOp, err = userop.New(data)
 	if err != nil {

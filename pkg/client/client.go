@@ -3,6 +3,7 @@ package client
 
 import (
 	"errors"
+	"log"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -94,6 +95,8 @@ func (i *Client) SetGetUserOpByHashFunc(fn GetUserOpByHashFunc) {
 // SendUserOperation implements the method call for eth_sendUserOperation.
 // It returns true if userOp was accepted otherwise returns an error.
 func (i *Client) SendUserOperation(op map[string]any, ep string) (string, error) {
+	log.Print(op)
+
 	// Init logger
 	l := i.logger.WithName("eth_sendUserOperation")
 
@@ -144,6 +147,8 @@ func (i *Client) SendUserOperation(op map[string]any, ep string) (string, error)
 // although there should be dummy values in place for the most reliable results (e.g. a signature with the
 // correct length).
 func (i *Client) EstimateUserOperationGas(op map[string]any, ep string) (*gas.GasEstimates, error) {
+	log.Print(op)
+
 	// Init logger
 	l := i.logger.WithName("eth_estimateUserOperationGas")
 
@@ -179,7 +184,7 @@ func (i *Client) EstimateUserOperationGas(op map[string]any, ep string) (*gas.Ga
 		return nil, err
 	}
 
-	pvg = big.NewInt(0).Add(pvg, big.NewInt(10000))
+	pvg = big.NewInt(0).Add(pvg, big.NewInt(20000))
 
 	l.Info("eth_estimateUserOperationGas ok")
 	return &gas.GasEstimates{
