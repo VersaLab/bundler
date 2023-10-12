@@ -152,68 +152,68 @@ func EstimateGas(in *EstimateInput) (verificationGas uint64, callGas uint64, err
 	// expected gas cost.
 	data["maxFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
 	data["maxPriorityFeePerGas"] = hexutil.EncodeBig(in.Op.MaxFeePerGas)
-	vgl = big.NewInt(0).Add(vgl, big.NewInt(40000))
+	vgl = big.NewInt(0).Add(vgl, big.NewInt(10000))
 	data["verificationGasLimit"] = hexutil.EncodeBig(vgl)
-	cgl = big.NewInt(0).Add(cgl, big.NewInt(40000))
+	cgl = big.NewInt(0).Add(cgl, big.NewInt(10000))
 	data["callGasLimit"] = hexutil.EncodeBig(cgl)
 	simOp, err = userop.New(data)
 	if err != nil {
 		return 0, 0, err
 	}
-	_, err = execution.TraceSimulateHandleOp(&execution.TraceInput{
-		Rpc:        in.Rpc,
-		EntryPoint: in.EntryPoint,
-		Op:         simOp,
-		ChainID:    in.ChainID,
-	})
-	if err != nil {
-		// Execution is successful but one shot tracing has failed. Fallback to binary search with an
-		// efficient range. Hitting this point could mean a contract is passing manual gas limits with a
-		// static discount, e.g. sub(gas(), STATIC_DISCOUNT). This is not yet accounted for in the tracer.
-		if isExecutionOOG(err) || isExecutionReverted(err) {
-			l := cgl.Int64()
-			r := in.MaxGasLimit.Int64()
-			f := int64(0)
-			simErr := err
-			for r-l >= fallBackBinarySearchCutoff {
-				m := (l + r) / 2
+	// _, err = execution.TraceSimulateHandleOp(&execution.TraceInput{
+	// 	Rpc:        in.Rpc,
+	// 	EntryPoint: in.EntryPoint,
+	// 	Op:         simOp,
+	// 	ChainID:    in.ChainID,
+	// })
+	// if err != nil {
+	// 	// Execution is successful but one shot tracing has failed. Fallback to binary search with an
+	// 	// efficient range. Hitting this point could mean a contract is passing manual gas limits with a
+	// 	// static discount, e.g. sub(gas(), STATIC_DISCOUNT). This is not yet accounted for in the tracer.
+	// 	if isExecutionOOG(err) || isExecutionReverted(err) {
+	// 		l := cgl.Int64()
+	// 		r := in.MaxGasLimit.Int64()
+	// 		f := int64(0)
+	// 		simErr := err
+	// 		for r-l >= fallBackBinarySearchCutoff {
+	// 			m := (l + r) / 2
 
-				data["callGasLimit"] = hexutil.EncodeBig(big.NewInt(int64(m)))
-				simOp, err := userop.New(data)
-				if err != nil {
-					return 0, 0, err
-				}
-				_, err = execution.TraceSimulateHandleOp(&execution.TraceInput{
-					Rpc:        in.Rpc,
-					EntryPoint: in.EntryPoint,
-					Op:         simOp,
-					ChainID:    in.ChainID,
-				})
-				simErr = err
-				if err == nil {
-					// CGL too high, go lower.
-					r = m - 1
-					// Set final.
-					f = m
-					continue
-				} else if isPrefundNotPaid(err) {
-					// CGL too high, go lower.
-					r = m - 1
-				} else if isExecutionOOG(err) || isExecutionReverted(err) {
-					// CGL too low, go higher.
-					l = m + 1
-					continue
-				} else {
-					// Unexpected error.
-					return 0, 0, err
-				}
-			}
-			if f == 0 {
-				return 0, 0, simErr
-			}
-			return simOp.VerificationGasLimit.Uint64(), big.NewInt(f).Uint64(), nil
-		}
-		return 0, 0, err
-	}
+	// 			data["callGasLimit"] = hexutil.EncodeBig(big.NewInt(int64(m)))
+	// 			simOp, err := userop.New(data)
+	// 			if err != nil {
+	// 				return 0, 0, err
+	// 			}
+	// 			_, err = execution.TraceSimulateHandleOp(&execution.TraceInput{
+	// 				Rpc:        in.Rpc,
+	// 				EntryPoint: in.EntryPoint,
+	// 				Op:         simOp,
+	// 				ChainID:    in.ChainID,
+	// 			})
+	// 			simErr = err
+	// 			if err == nil {
+	// 				// CGL too high, go lower.
+	// 				r = m - 1
+	// 				// Set final.
+	// 				f = m
+	// 				continue
+	// 			} else if isPrefundNotPaid(err) {
+	// 				// CGL too high, go lower.
+	// 				r = m - 1
+	// 			} else if isExecutionOOG(err) || isExecutionReverted(err) {
+	// 				// CGL too low, go higher.
+	// 				l = m + 1
+	// 				continue
+	// 			} else {
+	// 				// Unexpected error.
+	// 				return 0, 0, err
+	// 			}
+	// 		}
+	// 		if f == 0 {
+	// 			return 0, 0, simErr
+	// 		}
+	// 		return simOp.VerificationGasLimit.Uint64(), big.NewInt(f).Uint64(), nil
+	// 	}
+	// 	return 0, 0, err
+	// }
 	return simOp.VerificationGasLimit.Uint64(), simOp.CallGasLimit.Uint64(), nil
 }
