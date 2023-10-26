@@ -96,7 +96,7 @@ func PrivateMode() {
 	}
 	if chain.Cmp(config.ScrollChainID) == 0 || chain.Cmp(config.ScrollSepoliaChainID) == 0 {
 		ov.SetCalcPreVerificationGasFunc(gas.CalcScrollPVGWithEthClient(rpc, chain, conf.SupportedEntryPoints[0]))
-		ov.SetPreVerificationGasBufferFactor(20)
+		ov.SetPreVerificationGasBufferFactor(25)
 	}
 
 	mem, err := mempool.New(db)
