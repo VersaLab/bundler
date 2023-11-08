@@ -15,6 +15,7 @@ import (
 	"github.com/stackup-wallet/stackup-bundler/internal/config"
 	"github.com/stackup-wallet/stackup-bundler/internal/logger"
 	"github.com/stackup-wallet/stackup-bundler/internal/o11y"
+	"github.com/stackup-wallet/stackup-bundler/pkg/altmempools"
 	"github.com/stackup-wallet/stackup-bundler/pkg/bundler"
 	"github.com/stackup-wallet/stackup-bundler/pkg/client"
 	"github.com/stackup-wallet/stackup-bundler/pkg/gas"
@@ -82,13 +83,18 @@ func PrivateMode() {
 	}
 
 	ov := gas.NewDefaultOverhead()
-	if chain.Cmp(config.ArbitrumOneChainID) == 0 || chain.Cmp(config.ArbitrumGoerliChainID) == 0 ||
+	if chain.Cmp(config.ArbitrumOneChainID) == 0 ||
+		chain.Cmp(config.ArbitrumGoerliChainID) == 0 ||
 		chain.Cmp(config.ArbitrumSepoliaChainID) == 0 {
 		ov.SetCalcPreVerificationGasFunc(gas.CalcArbitrumPVGWithEthClient(rpc, conf.SupportedEntryPoints[0]))
 		ov.SetPreVerificationGasBufferFactor(16)
 	}
-	if chain.Cmp(config.OptimismChainID) == 0 || chain.Cmp(config.OptimismGoerliChainID) == 0 ||
-		chain.Cmp(config.BaseChainID) == 0 || chain.Cmp(config.BaseGoerliChainID) == 0 {
+	if chain.Cmp(config.OptimismChainID) == 0 ||
+		chain.Cmp(config.OptimismGoerliChainID) == 0 ||
+		chain.Cmp(config.OptimismSepoliaChainID) == 0 ||
+		chain.Cmp(config.BaseChainID) == 0 ||
+		chain.Cmp(config.BaseGoerliChainID) == 0 ||
+		chain.Cmp(config.BaseSepoliaChainID) == 0 {
 		ov.SetCalcPreVerificationGasFunc(
 			gas.CalcOptimismPVGWithEthClient(rpc, chain, conf.SupportedEntryPoints[0]),
 		)
@@ -104,10 +110,16 @@ func PrivateMode() {
 		log.Fatal(err)
 	}
 
+	alt, err := altmempools.NewFromIPFS(chain, conf.AltMempoolIPFSGateway, conf.AltMempoolIds)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	check := checks.New(
 		db,
 		rpc,
 		ov,
+		alt,
 		conf.MaxVerificationGas,
 		conf.MaxBatchGasLimit,
 		conf.MaxOpsForUnstakedSender,
