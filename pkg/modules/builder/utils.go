@@ -7,5 +7,5 @@ import (
 
 var (
 	// CompatibleChainIDs is a set of chainIDs that support the Block Builder API.
-	CompatibleChainIDs = mapset.NewSet(config.EthereumChainID.Uint64(), config.GoerliChainID.Uint64())
+	CompatibleChainIDs = mapset.NewSet(config.EthereumChainID.Uint64(), config.EthereumSepoliaChainID.Uint64())
 )

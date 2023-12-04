@@ -2,32 +2,32 @@ version: "3.9"
 
 services:
   bundler-1:
-    container_name: bundler-scroll-mainnet-v1.2-1
+    container_name: bundler-base-sepolia-v1.2-1
     build: .
     restart: unless-stopped
     ports:
-      - 10217:4337
+      - 10282:4337
     volumes:
-      - .env-scroll-mainnet-1:/app/.env
+      - .env-base-sepolia-1:/app/.env
     environment:
       - TZ=Asia/Shanghai
   bundler-2:
-    container_name: bundler-scroll-mainnet-v1.2-2
+    container_name: bundler-base-sepolia-v1.2-2
     build: .
     restart: unless-stopped
     ports:
-      - 10218:4337
+      - 10283:4337
     volumes:
-      - .env-scroll-mainnet-2:/app/.env
+      - .env-base-sepolia-2:/app/.env
     environment:
       - TZ=Asia/Shanghai
   bundler-3:
-    container_name: bundler-scroll-mainnet-v1.2-3
+    container_name: bundler-base-sepolia-v1.2-3
     build: .
     restart: unless-stopped
     ports:
-      - 10219:4337
+      - 10284:4337
     volumes:
-      - .env-scroll-mainnet-3:/app/.env
+      - .env-base-sepolia-3:/app/.env
     environment:
       - TZ=Asia/Shanghai

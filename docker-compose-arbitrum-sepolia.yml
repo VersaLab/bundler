@@ -2,32 +2,32 @@ version: "3.9"
 
 services:
   bundler-1:
-    container_name: bundler-scroll-sepolia-v1.2-1
+    container_name: bundler-arbitrum-sepolia-v1.2-1
     build: .
     restart: unless-stopped
     ports:
-      - 10270:4337
+      - 10276:4337
     volumes:
-      - .env-scroll-sepolia-1:/app/.env
+      - .env-arbitrum-sepolia-1:/app/.env
     environment:
       - TZ=Asia/Shanghai
   bundler-2:
-    container_name: bundler-scroll-sepolia-v1.2-2
+    container_name: bundler-arbitrum-sepolia-v1.2-2
     build: .
     restart: unless-stopped
     ports:
-      - 10271:4337
+      - 10277:4337
     volumes:
-      - .env-scroll-sepolia-2:/app/.env
+      - .env-arbitrum-sepolia-2:/app/.env
     environment:
       - TZ=Asia/Shanghai
   bundler-3:
-    container_name: bundler-scroll-sepolia-v1.2-3
+    container_name: bundler-arbitrum-sepolia-v1.2-3
     build: .
     restart: unless-stopped
     ports:
-      - 10272:4337
+      - 10278:4337
     volumes:
-      - .env-scroll-sepolia-3:/app/.env
+      - .env-arbitrum-sepolia-3:/app/.env
     environment:
       - TZ=Asia/Shanghai
