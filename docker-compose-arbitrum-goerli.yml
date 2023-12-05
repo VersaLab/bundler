@@ -2,32 +2,32 @@ version: "3.9"
 
 services:
   bundler-1:
-    container_name: bundler-base-sepolia-v1.2-1
+    container_name: bundler-arbitrum-goerli-v1.2-1
     build: .
     restart: unless-stopped
     ports:
-      - 10282:4337
+      - 10276:4337
     volumes:
-      - .env-base-sepolia-1:/app/.env
+      - .env-arbitrum-goerli-1:/app/.env
     environment:
       - TZ=Asia/Shanghai
   bundler-2:
-    container_name: bundler-base-sepolia-v1.2-2
+    container_name: bundler-arbitrum-goerli-v1.2-2
     build: .
     restart: unless-stopped
     ports:
-      - 10283:4337
+      - 10277:4337
     volumes:
-      - .env-base-sepolia-2:/app/.env
+      - .env-arbitrum-goerli-2:/app/.env
     environment:
       - TZ=Asia/Shanghai
   bundler-3:
-    container_name: bundler-base-sepolia-v1.2-3
+    container_name: bundler-arbitrum-goerli-v1.2-3
     build: .
     restart: unless-stopped
     ports:
-      - 10284:4337
+      - 10278:4337
     volumes:
-      - .env-base-sepolia-3:/app/.env
+      - .env-arbitrum-goerli-3:/app/.env
     environment:
       - TZ=Asia/Shanghai

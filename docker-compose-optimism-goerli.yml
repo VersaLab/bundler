@@ -2,32 +2,32 @@ version: "3.9"
 
 services:
   bundler-1:
-    container_name: bundler-arbitrum-sepolia-v1.2-1
+    container_name: bundler-optimism-goerli-v1.2-1
     build: .
     restart: unless-stopped
     ports:
-      - 10276:4337
+      - 10279:4337
     volumes:
-      - .env-arbitrum-sepolia-1:/app/.env
+      - .env-optimism-goerli-1:/app/.env
     environment:
       - TZ=Asia/Shanghai
   bundler-2:
-    container_name: bundler-arbitrum-sepolia-v1.2-2
+    container_name: bundler-optimism-goerli-v1.2-2
     build: .
     restart: unless-stopped
     ports:
-      - 10277:4337
+      - 10280:4337
     volumes:
-      - .env-arbitrum-sepolia-2:/app/.env
+      - .env-optimism-goerli-2:/app/.env
     environment:
       - TZ=Asia/Shanghai
   bundler-3:
-    container_name: bundler-arbitrum-sepolia-v1.2-3
+    container_name: bundler-optimism-goerli-v1.2-3
     build: .
     restart: unless-stopped
     ports:
-      - 10278:4337
+      - 10281:4337
     volumes:
-      - .env-arbitrum-sepolia-3:/app/.env
+      - .env-optimism-goerli-3:/app/.env
     environment:
       - TZ=Asia/Shanghai
