@@ -93,7 +93,8 @@ func (v *storageSlotsValidator) Process() ([]string, error) {
 	// 		"read":  access.Reads,
 	// 		"write": access.Writes,
 	// 	}
-	// 	for key, slotCount := range accessTypes {
+	// 	// for key, slotCount := range accessTypes {
+	// 	for _, slotCount := range accessTypes {
 	// 		for slot := range slotCount {
 	// 			if isAssociatedWith(senderSlots, slot) {
 	// 				if (len(v.Op.InitCode) > 0 && !v.FactoryIsStaked) ||
@@ -110,14 +111,14 @@ func (v *storageSlotsValidator) Process() ([]string, error) {
 	// 				fmt.Sprintf("0x%s", slot),
 	// 			); len(ids) > 0 {
 	// 				altMempoolIds = append(altMempoolIds, ids...)
-	// 			} else {
-	// 				return altMempoolIds, fmt.Errorf(
-	// 					"%s has forbidden %s to %s slot %s",
-	// 					v.EntityName,
-	// 					key,
-	// 					addr2KnownEntity(v.Op, addr),
-	// 					slot,
-	// 				)
+	// 				// } else {
+	// 				// 	return altMempoolIds, fmt.Errorf(
+	// 				// 		"%s has forbidden %s to %s slot %s",
+	// 				// 		v.EntityName,
+	// 				// 		key,
+	// 				// 		addr2KnownEntity(v.Op, addr),
+	// 				// 		slot,
+	// 				// 	)
 	// 			}
 	// 		}
 	// 	}
