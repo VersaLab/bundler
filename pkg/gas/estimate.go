@@ -20,7 +20,8 @@ var (
 
 func isPrefundNotPaid(err error) bool {
 	return strings.Contains(err.Error(), "AA21 didn't pay prefund") ||
-		strings.Contains(err.Error(), "AA31 paymaster deposit too low")
+		strings.Contains(err.Error(), "AA31 paymaster deposit too low") ||
+		strings.Contains(err.Error(), "SessionKeyValidator: gas fee exceeds remaining gas")
 }
 
 func isValidationOOG(err error) bool {
