@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  bundler-1:
+    container_name: bundler-scroll-mainnet-v1.2-1
+    build: .
+    restart: unless-stopped
+    ports:
+      - 10270:4337
+    volumes:
+      - .env-scroll-mainnet-1:/app/.env
+    environment:
+      - TZ=Asia/Shanghai
+  bundler-2:
+    container_name: bundler-scroll-mainnet-v1.2-2
+    build: .
+    restart: unless-stopped
+    ports:
+      - 10271:4337
+    volumes:
+      - .env-scroll-mainnet-2:/app/.env
+    environment:
+      - TZ=Asia/Shanghai
+  bundler-3:
+    container_name: bundler-scroll-mainnet-v1.2-3
+    build: .
+    restart: unless-stopped
+    ports:
+      - 10272:4337
+    volumes:
+      - .env-scroll-mainnet-3:/app/.env
+    environment:
+      - TZ=Asia/Shanghai

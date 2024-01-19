@@ -85,17 +85,17 @@ func PrivateMode() {
 	ov := gas.NewDefaultOverhead()
 	if chain.Cmp(config.ScrollChainID) == 0 || chain.Cmp(config.ScrollSepoliaChainID) == 0 {
 		ov.SetCalcPreVerificationGasFunc(gas.CalcScrollPVGWithEthClient(rpc, chain, conf.SupportedEntryPoints[0]))
-		ov.SetPreVerificationGasBufferFactor(30)
+		ov.SetPreVerificationGasBufferFactor(20)
 	}
 	if chain.Cmp(config.PolygonChainID) == 0 ||
 		chain.Cmp(config.PolygonMumbaiChainID) == 0 {
-		ov.SetPreVerificationGasBufferFactor(10)
+		ov.SetPreVerificationGasBufferFactor(400)
 	}
 	if chain.Cmp(config.ArbitrumOneChainID) == 0 ||
 		chain.Cmp(config.ArbitrumGoerliChainID) == 0 ||
 		chain.Cmp(config.ArbitrumSepoliaChainID) == 0 {
 		ov.SetCalcPreVerificationGasFunc(gas.CalcArbitrumPVGWithEthClient(rpc, conf.SupportedEntryPoints[0]))
-		ov.SetPreVerificationGasBufferFactor(30)
+		ov.SetPreVerificationGasBufferFactor(20)
 	}
 	if chain.Cmp(config.OptimismChainID) == 0 ||
 		chain.Cmp(config.OptimismGoerliChainID) == 0 ||
@@ -106,7 +106,7 @@ func PrivateMode() {
 		ov.SetCalcPreVerificationGasFunc(
 			gas.CalcOptimismPVGWithEthClient(rpc, chain, conf.SupportedEntryPoints[0]),
 		)
-		ov.SetPreVerificationGasBufferFactor(30)
+		ov.SetPreVerificationGasBufferFactor(20)
 	}
 
 	mem, err := mempool.New(db)

@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  bundler-1:
+    container_name: bundler-base-mainnet-v1.2-1
+    build: .
+    restart: unless-stopped
+    ports:
+      - 10282:4337
+    volumes:
+      - .env-base-mainnet-1:/app/.env
+    environment:
+      - TZ=Asia/Shanghai
+  bundler-2:
+    container_name: bundler-base-mainnet-v1.2-2
+    build: .
+    restart: unless-stopped
+    ports:
+      - 10283:4337
+    volumes:
+      - .env-base-mainnet-2:/app/.env
+    environment:
+      - TZ=Asia/Shanghai
+  bundler-3:
+    container_name: bundler-base-mainnet-v1.2-3
+    build: .
+    restart: unless-stopped
+    ports:
+      - 10284:4337
+    volumes:
+      - .env-base-mainnet-3:/app/.env
+    environment:
+      - TZ=Asia/Shanghai
