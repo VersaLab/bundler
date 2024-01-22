@@ -6,9 +6,6 @@ var (
 	EthereumChainID        = big.NewInt(1)
 	EthereumSepoliaChainID = big.NewInt(11155111)
 
-	ScrollChainID        = big.NewInt(534352)
-	ScrollSepoliaChainID = big.NewInt(534351)
-
 	PolygonChainID       = big.NewInt(137)
 	PolygonMumbaiChainID = big.NewInt(80001)
 
@@ -21,6 +18,13 @@ var (
 	BaseChainID        = big.NewInt(8453)
 	BaseSepoliaChainID = big.NewInt(84532)
 
+	ScrollChainID        = big.NewInt(534352)
+	ScrollSepoliaChainID = big.NewInt(534351)
+
+	PolygonZKEVMChainID        = big.NewInt(1101)
+	PolygonZKEVMTestnetChainID = big.NewInt(1442)
+
+	// legacy
 	ArbitrumGoerliChainID = big.NewInt(421613)
 	OptimismGoerliChainID = big.NewInt(420)
 	BaseGoerliChainID     = big.NewInt(84531)
