@@ -85,7 +85,7 @@ func PrivateMode() {
 	ov := gas.NewDefaultOverhead()
 	if chain.Cmp(config.PolygonChainID) == 0 ||
 		chain.Cmp(config.PolygonMumbaiChainID) == 0 {
-		ov.SetPreVerificationGasBufferFactor(200)
+		ov.SetPreVerificationGasBufferFactor(400)
 	}
 	if chain.Cmp(config.ArbitrumOneChainID) == 0 ||
 		chain.Cmp(config.ArbitrumSepoliaChainID) == 0 {
