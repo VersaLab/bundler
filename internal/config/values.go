@@ -40,9 +40,10 @@ type Values struct {
 	AltMempoolIds         []string
 
 	// Undocumented variables.
-	DebugMode bool
-	GinMode   string
-	GasPrice  int
+	DebugMode          bool
+	GinMode            string
+	GasPrice           int
+	PregasBufferFactor int
 }
 
 func envKeyValStringToMap(s string) map[string]string {
@@ -94,6 +95,7 @@ func GetValues() *Values {
 	viper.SetDefault("erc4337_bundler_debug_mode", false)
 	viper.SetDefault("erc4337_bundler_gin_mode", gin.ReleaseMode)
 	viper.SetDefault("erc4337_bundler_customize_gas_price", 0)
+	viper.SetDefault("erc4337_bundler_pregas_buffer_factor", 0)
 
 	// Read in from .env file if available
 	viper.SetConfigName(".env")
@@ -130,6 +132,7 @@ func GetValues() *Values {
 	_ = viper.BindEnv("erc4337_bundler_debug_mode")
 	_ = viper.BindEnv("erc4337_bundler_gin_mode")
 	_ = viper.BindEnv("erc4337_bundler_customize_gas_price")
+	_ = viper.BindEnv("erc4337_bundler_pregas_buffer_factor")
 
 	// Validate required variables
 	if variableNotSetOrIsNil("erc4337_bundler_eth_client_url") {
@@ -189,6 +192,7 @@ func GetValues() *Values {
 	debugMode := viper.GetBool("erc4337_bundler_debug_mode")
 	ginMode := viper.GetString("erc4337_bundler_gin_mode")
 	gasPrice := viper.GetInt("erc4337_bundler_customize_gas_price")
+	pregasBufferFactor := viper.GetInt("erc4337_bundler_pregas_buffer_factor")
 	return &Values{
 		PrivateKey:              privateKey,
 		EthClientUrl:            ethClientUrl,
@@ -211,5 +215,6 @@ func GetValues() *Values {
 		DebugMode:               debugMode,
 		GinMode:                 ginMode,
 		GasPrice:                gasPrice,
+		PregasBufferFactor:      pregasBufferFactor,
 	}
 }
